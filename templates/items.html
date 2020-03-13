@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<nav class="navbar sticky-top navbar-light bg-light">
+  <a class="navbar-brand" href="/dashboard">
+    <img src="/static/img/logo1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+  </a>
+  {% if "user_id" in session %}
+    <form class="form-inline">
+      <a button class="btn btn-outline-primary my-2 my-sm-0" type="button" href="/logout">Logout</a>
+    </form>
+  {% endif %}
+</nav>
+  
+<div class="alert alert-info" role="alert">
+  This list has been shared with {{ num_users }} user/s
+  <form action='/lists/{{ to_do_list.list_id }}', method="POST">
+    <label>Share this list with a friend!
+      <input type="text" name="email" placeholder="Email Address">
+       <input type="submit" value="Share" class="btn btn-primary">
+    </label>
+  </form>
+</div>
+
+<div class="col col-md-6">
+  <div class="card" id="todo-lists">
+    <div class="card-header">
+      <h1>Your list contents</h1>
+        <div class="input-group mb-3">
+          <form action="/additem/{{ to_do_list.list_id }}" method="POST">
+            <input type="text" name="item_title" required placeholder="Add a New Item">
+            <input type="text" name="item_description" placeholder="Add Item Description">
+            <input type="submit" value="Add" class="btn btn-primary">
+          </form>          
+        </div>
+      </div>
+
+    <div class="card-body">
+      {% if to_do_list.to_do_items %}
+        <ul class="list-group list-group-flush">
+          {% for item in to_do_list.to_do_items %}
+            <li class="list-group-item todo-item {{ 'completed' if item.completed else '' }}">
+            <h4>{{ item.item_title.title() }}
+              <button id="{{ item.item_title }}" type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </h4>
+            <h5>Description: {{ item.item_description.title() }}</h5>
+            <form
+              action="/item/{{ item.item_id }}/update-completed"
+              method="POST"
+            >
+              <input
+                type="hidden"
+                name="list_id"
+                value="{{ to_do_list.list_id }}"
+              >
+              <input
+                type="checkbox"
+                name="item_completed"
+                {% if item.completed %}
+                  checked
+                {% endif %}
+              >
+              <label>Completed</label>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <script type="text/javascript">
+      $('.todo-item').on(
+        'click',
+        'input[type="checkbox"]',
+        (evt) => {
+          const clickedEl = $(evt.target);
+          clickedEl.parents('li').toggleClass('completed');
+        }
+      );
+    </script>
+
+    <script type="text/javascript">
+      $("button.close").click(function() {
+        const removeItem = this.id;
+        $.post("/removeitem/" + removeItem, function(data) {
+          window.location.reload();
+        });
+      });
+    </script>
+  </div>
+</div>
+</div>
+
+{% endblock %}

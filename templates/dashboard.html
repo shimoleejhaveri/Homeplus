@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav class="navbar sticky-top navbar-light bg-light">
+  <a class="navbar-brand" href="/dashboard">
+    <img src="/static/img/logo1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+  </a>
+  {% if "user_id" in session %}
+    <form class="form-inline">
+      <a button class="btn btn-outline-primary my-2 my-sm-0" type="button" href="/logout">Logout</a>
+    </form>
+  {% endif %}
+</nav>
+
+<div id="dashboard" class="container-fluid">
+  <div class="row">
+
+    <!-- Column 1 -->
+    <div class="col col-md-4">
+      <div class="card" id="todo-lists">
+        <div class="card-header">
+          <h1>To-Do Lists</h1>
+            <div class="input-group mb-3">
+              <form action="/addlist/{{ user.user_id }}" method="POST">
+                <input type="text" name="list_title" required placeholder="Create a New List">
+                <input type="submit" value="Create" class="btn btn-primary">
+              </form>          
+            </div>
+          </div>
+
+        <div class="card-body">
+          {% if user.to_do_lists %}
+            <h2>My Lists</h2>
+            <ul class="list-group">
+              {% for list in user.to_do_lists %}
+                <li class="list-group-item">
+                  <a href="/lists/{{ list.list_id }}">
+                    {{ list.list_title.title() }}
+                  </a>
+                  <button id="{{ list.list_title }}" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if user.shared_lists %}
+            <h2>Shared Lists</h2>
+            <ul class="list-group">
+              {% for list in user.shared_lists %}
+                <li class="list-group-item">
+                  <a href="/lists/{{ list.list_id }}">
+                    {{ list.list_title.title() }}
+                  </a>
+                  <button id="{{ list.list_title }}" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          <script type="text/javascript">
+            $("button.close").click(function() {
+              const removeList = this.id;
+              $.post("/removelist/" + removeList, function(data) {
+                window.location.reload();
+              });
+            });
+          </script>
+        </div>
+      </div>
+
+      <div class="card" id="stocks">
+        <div class="card-header" >
+          <h1>Stocks</h1>
+            <div class="stock-info" id="stock-info">
+              <div class="modal-window" id="modal-window">
+                <form id="stock-value" method="GET" action="/api/stocks">
+                  <input id="stock-symbol" type="text" name="symbol" required placeholder="Enter Stock ID">
+                  <input type="submit" value="Show" class="btn btn-primary" data-toggle="modal" data-target="#myModal" id="myBtn">
+
+                  <script type="text/javascript">
+                  $('#stock-info').on('submit', (evt) => {
+                    evt.preventDefault();
+                    let stockSymbol = $('#stock-symbol').val()
+                    $.get(
+                      '/api/stocks',
+                      {symbol: $('#stock-symbol').val()},
+                      (res) => {
+                        $('#stock-name').html(stockSymbol)
+                        $('#stock-price').html(`${res[stockSymbol]}`)
+                      }
+                    );
+                  });
+                  </script>
+
+                  <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="stock-name"> </h5>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          <p id="stock-price"> </p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table-bordered w-100">
+              <tbody id="stocklist">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    <!-- Column 2 -->
+    <div class="col">
+      <div class="card" id="news">
+        <div class="card-header">
+          <h1>News</h1>
+        </div>
+        <div class="card-body" style="height: 300px; overflow: scroll;">
+          <ul class="list-group">
+            {% for article in article_list %}
+              <li class="list-group-item">
+                <p class="lead">
+                  <a href="{{ article['url']}}" target="_blank">{{ article['title'] }}</a>
+                  {{ article['publication_date'][:10] }}
+                </p>
+                <p>{{ article['description'] }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      
+      <div class="card" id="calendar">
+        <div class="card-header">
+          <h1>Calendar</h1>
+            <button id="prev" class="btn btn-primary">Prev</button>
+            <button id="next" class="btn btn-primary">Next</button>
+
+            <button id="authorize_button" style="display: none;">Authorize</button>
+            <button id="signout_button" style="display: none;">Sign Out</button>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+            <script type="text/javascript">
+              const CLIENT_ID = '{{ client_id }}';
+              const API_KEY = '{{ api_key }}';
+              const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+            </script>
+
+            <script src="/static/calendar.js"></script>
+
+            <script async defer src="https://apis.google.com/js/api.js"
+              onload="this.onload=function(){};gapi.load('client:auth2', initClient)"
+              onreadystatechange="if (this.readyState === 'complete') this.onload()">
+            </script>
+          </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        const renderStockInfo = () => {
+          const stocksByTime = JSON.parse(localStorage.getItem('stockInfo'));
+          if (stocksByTime) {
+            const latestTime = Object.keys(stocksByTime).sort().pop();
+            const latestStockInfo = stocksByTime[latestTime];
+            console.log(latestStockInfo);
+
+            $('#stocklist').html('');
+
+            for (const [ sym, price ] of Object.entries(latestStockInfo)) {
+              $('#stocklist').append(`
+                <tr>
+                  <th class="p-1">${sym}</th>
+                  <td class="p-1">${price}</td>
+                </tr>
+              `);
+            }
+          }
+        };
+
+        if (!localStorage.getItem('stockInfo')) {
+          $.get(
+            '/api/stocks',
+            {symbol: ['AAPL', 'AMZN', 'FB', 'GOOGL', 'NFLX']},
+            (res) => {
+              if (res !== {}) {
+                const timestamp = new Date().toISOString();
+                const stocksByTime = {};
+                stocksByTime[timestamp] = res;
+                console.log(res);
+                console.log(stocksByTime);
+
+                localStorage.setItem('stockInfo', JSON.stringify(stocksByTime));
+                renderStockInfo();
+              }
+            }
+          );
+        } else {
+          const stocksByTime = JSON.parse(localStorage.getItem('stockInfo'));
+          const latestTime = moment(Object.keys(stocksByTime).sort().pop());
+          const now = moment();
+
+          const timeElapsed = moment.duration(now.diff(latestTime));
+          if (timeElapsed.minutes >= 3) {
+            $.get(
+              '/api/stocks',
+              {symbol: ['AAPL', 'AMZN', 'FB', 'GOOGL', 'NFLX']},
+              (res) => {
+                const timestamp = new Date();
+                stocksByTime[timestamp] = res;
+
+                localStorage.setItem('stockInfo', JSON.stringify(stocksByTime));
+                renderStockInfo();
+              }
+            );
+          } else {
+            renderStockInfo();
+          }
+        }
+      </script>
+      
+  </div>
+</div>
+
+{% endblock %}
