@@ -353,6 +353,7 @@ def remove_shared_item(shared_list_id):
     return redirect(f"/lists/{shared_list_id}")
 
 
+########## STOCK INFO
 @app.route("/api/stocks", methods=["GET"])
 def get_user_stock_info():
     """Get latest stock price for user input in modal window."""
@@ -372,7 +373,7 @@ def get_user_stock_info():
 
 
 @app.route("/api/stock_details/<stock_id>", methods=["GET"])
-def display_chart_stuff(stock_id):
+def display_chart(stock_id):
     """Display chart graph for the day with half-hourly stock prices."""
 
     api_key = os.environ.get("AV_API_KEY", "")
