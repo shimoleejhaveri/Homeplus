@@ -27,7 +27,7 @@ function initClient() {
       });
     },
     // (err) => {
-    //   alert(`We couldn't log you in for some reason.\n${JSON.stringify(error, null, 2)}`);
+    //   alert(`We couldn't log you in for some reason.\n${JSON.stringify(err, null, 2)}`);
     // }
   );
 }
