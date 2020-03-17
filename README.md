@@ -11,7 +11,7 @@ Before becoming a software engineer, Shimolee worked as an attorney at a leading
 * [Future State](#future)
 * [Installation](#installation)
 
-## <a name="tech-stack"></a>Technologies
+## <a name="tech-stack"></a>Tech Stack
 * Bootstrap
 * CSS3
 * Flask
