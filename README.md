@@ -4,6 +4,9 @@ Home+ is a personalised user dashboard that is designed to help the users manage
 ## About Me
 Before becoming a software engineer, Shimolee worked as an attorney at a leading law firm in India. After moving to the US in 2017, she joined Casetext, a company that builds its own AI to provide contextual legal search results. Working there made her realize that she wanted to be a part of the engineering process itself, thereby inspiring her to join the Hackbright Academy. During her time at Hackbright, she found that the skills that she had acquired as an attorney, such as being adaptable, detail-oriented, and logical thinking, have been most transferable and useful. She enjoys programming because it allows her to experiment with and build solutions to complex problems with a very structured thought process, and learn new ways of solving the same problem.
 
+## Deployment
+http://homeplusbeta.com/
+
 ## Contents
 * [Tech Stack](#tech-stack)
 * [APIs](#api)
