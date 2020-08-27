@@ -82,11 +82,12 @@ The project roadmap for Home+ has several features planned out for the next spri
 * Weather feature to display daily weather using Geolocation API
 * Charts to show daily stock price fluctuations for displayed and searched stocks
 * Password hashing
+* SSL Certification for Google OAuth2.0
 
 ## <a name="installation"></a>Installation
 To run Home+ on your own machine:
 
-Install PostgresQL (Mac OSX)
+Install PostgreSQL (Mac OSX)
 
 Clone or fork this repo:
 ```
